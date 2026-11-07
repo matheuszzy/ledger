@@ -24,8 +24,11 @@ func (b *Balance) Deposit(amount float64) error {
 }
 
 func (b *Balance) Withdraw(amount float64) error {
-	if amount < 0 || b.amount < amount {
+	if amount < 0 {
 		return ErrNegativeAmount
+	}
+	if b.amount < amount {
+		return ErrInsufficientFunds
 	}
 	b.amount -= amount
 	return nil

@@ -87,8 +87,8 @@ func TestAccount_RejectedOperationsKeepBalance(t *testing.T) {
 	if err := account.GetBalance().Deposit(-5); !errors.Is(err, ErrNegativeAmount) {
 		t.Fatalf("Deposit(-5) error = %v, want ErrNegativeAmount", err)
 	}
-	if err := account.GetBalance().Withdraw(50); err == nil {
-		t.Fatal("Withdraw(50) error = nil, want an error")
+	if err := account.GetBalance().Withdraw(50); !errors.Is(err, ErrInsufficientFunds) {
+		t.Fatalf("Withdraw(50) error = %v, want ErrInsufficientFunds", err)
 	}
 	if got := account.GetBalance().GetAmount(); got != 10 {
 		t.Fatalf("balance after rejected operations = %v, want 10", got)

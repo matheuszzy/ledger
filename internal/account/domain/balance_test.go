@@ -124,8 +124,8 @@ func TestBalance_Withdraw_InsufficientFunds(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			balance, _ := NewBalance(tt.start)
 
-			if err := balance.Withdraw(tt.amount); err == nil {
-				t.Fatalf("Withdraw(%v) from %v error = nil, want an error", tt.amount, tt.start)
+			if err := balance.Withdraw(tt.amount); !errors.Is(err, ErrInsufficientFunds) {
+				t.Fatalf("Withdraw(%v) from %v error = %v, want ErrInsufficientFunds", tt.amount, tt.start, err)
 			}
 			if balance.GetAmount() != tt.start {
 				t.Fatalf("balance after rejected Withdraw = %v, want %v", balance.GetAmount(), tt.start)
