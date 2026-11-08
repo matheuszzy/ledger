@@ -22,7 +22,7 @@ func TestMemory_GetByID_Missing(t *testing.T) {
 	repo := NewMemory()
 
 	account, err := repo.GetByID("1234")
-	if !errors.Is(err, ErrNotFound) || account != nil {
+	if !errors.Is(err, domain.ErrNotFound) || account != nil {
 		t.Fatalf("GetByID = (%v, %v), want (nil, ErrNotFound)", account, err)
 	}
 }
@@ -46,7 +46,7 @@ func TestMemory_Save_Nil(t *testing.T) {
 
 	repo.Save(nil)
 
-	if _, err := repo.GetByID(""); !errors.Is(err, ErrNotFound) {
+	if _, err := repo.GetByID(""); !errors.Is(err, domain.ErrNotFound) {
 		t.Fatalf("GetByID after nil Save error = %v, want ErrNotFound", err)
 	}
 }
@@ -81,7 +81,7 @@ func TestMemory_Reset(t *testing.T) {
 	repo.Reset()
 
 	for _, id := range []string{"100", "300"} {
-		if _, err := repo.GetByID(id); !errors.Is(err, ErrNotFound) {
+		if _, err := repo.GetByID(id); !errors.Is(err, domain.ErrNotFound) {
 			t.Fatalf("GetByID(%s) after Reset error = %v, want ErrNotFound", id, err)
 		}
 	}

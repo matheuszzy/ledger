@@ -26,7 +26,7 @@ func (m *Memory) GetByID(id string) (*domain.Account, error) {
 	defer m.mu.RUnlock()
 	stored, existing := m.accounts[id]
 	if !existing {
-		return nil, ErrNotFound
+		return nil, domain.ErrNotFound
 	}
 	return clone(stored), nil
 }

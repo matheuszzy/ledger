@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/matheuszzy/ledger/internal/account/domain"
-	"github.com/matheuszzy/ledger/internal/account/repository"
 )
 
 func TestService_Withdraw(t *testing.T) {
@@ -60,7 +59,7 @@ func TestService_Withdraw_NonExistingAccount(t *testing.T) {
 
 	_, err := svc.Withdraw("200", 10)
 
-	if !errors.Is(err, repository.ErrNotFound) {
+	if !errors.Is(err, domain.ErrNotFound) {
 		t.Fatalf("Withdraw error = %v, want ErrNotFound", err)
 	}
 	assertMissing(t, store, "200")

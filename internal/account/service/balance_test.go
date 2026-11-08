@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/matheuszzy/ledger/internal/account/domain"
-	"github.com/matheuszzy/ledger/internal/account/repository"
 )
 
 func TestService_Balance(t *testing.T) {
@@ -39,7 +38,7 @@ func TestService_Balance_Errors(t *testing.T) {
 		id      string
 		wantErr error
 	}{
-		{"unknown account", "1234", repository.ErrNotFound},
+		{"unknown account", "1234", domain.ErrNotFound},
 		{"empty id", "", domain.ErrInvalidID},
 	}
 	for _, tt := range tests {
@@ -63,7 +62,7 @@ func TestService_Balance_HasNoSideEffects(t *testing.T) {
 	seed(t, store, "100", 20)
 
 	for range 3 {
-		if _, err := svc.Balance("1234"); !errors.Is(err, repository.ErrNotFound) {
+		if _, err := svc.Balance("1234"); !errors.Is(err, domain.ErrNotFound) {
 			t.Fatalf("Balance(1234) error = %v, want ErrNotFound", err)
 		}
 		if got, err := svc.Balance("100"); err != nil || got != 20 {

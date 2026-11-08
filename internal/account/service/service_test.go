@@ -40,7 +40,7 @@ func assertBalance(t *testing.T, store *repository.Memory, id string, want float
 // assertMissing checks that no account is stored under id.
 func assertMissing(t *testing.T, store *repository.Memory, id string) {
 	t.Helper()
-	if _, err := store.GetByID(id); !errors.Is(err, repository.ErrNotFound) {
+	if _, err := store.GetByID(id); !errors.Is(err, domain.ErrNotFound) {
 		t.Fatalf("account %q: error = %v, want ErrNotFound (account must not exist)", id, err)
 	}
 }

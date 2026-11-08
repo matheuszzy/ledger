@@ -6,7 +6,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/matheuszzy/ledger/internal/account/domain"
-	"github.com/matheuszzy/ledger/internal/account/repository"
 )
 
 var (
@@ -16,7 +15,7 @@ var (
 
 func writeError(c *gin.Context, err error) {
 	switch {
-	case errors.Is(err, repository.ErrNotFound):
+	case errors.Is(err, domain.ErrNotFound):
 		c.String(http.StatusNotFound, "0")
 	case errors.Is(err, domain.ErrInsufficientFunds):
 		c.String(http.StatusUnprocessableEntity, "0")

@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/matheuszzy/ledger/internal/account/domain"
-	"github.com/matheuszzy/ledger/internal/account/repository"
 )
 
 func TestService_Transfer(t *testing.T) {
@@ -45,7 +44,7 @@ func TestService_Transfer_Errors(t *testing.T) {
 		amount      float64
 		wantErr     error
 	}{
-		{"non-existing origin", "200", "300", 15, repository.ErrNotFound},
+		{"non-existing origin", "200", "300", 15, domain.ErrNotFound},
 		{"insufficient funds", "100", "300", 11, domain.ErrInsufficientFunds},
 		{"negative amount", "100", "300", -1, domain.ErrNegativeAmount},
 		{"empty origin", "", "300", 1, domain.ErrInvalidID},
@@ -89,7 +88,7 @@ func TestService_Transfer_SameAccount(t *testing.T) {
 	}
 	assertBalance(t, store, "100", 10)
 
-	if _, err := svc.Transfer("200", "200", 5); !errors.Is(err, repository.ErrNotFound) {
+	if _, err := svc.Transfer("200", "200", 5); !errors.Is(err, domain.ErrNotFound) {
 		t.Fatalf("Transfer from non-existing account to itself error = %v, want ErrNotFound", err)
 	}
 	assertMissing(t, store, "200")

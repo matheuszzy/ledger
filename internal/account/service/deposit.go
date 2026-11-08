@@ -4,14 +4,13 @@ import (
 	"errors"
 
 	"github.com/matheuszzy/ledger/internal/account/domain"
-	"github.com/matheuszzy/ledger/internal/account/repository"
 )
 
 func (s *Service) Deposit(destination string, amount float64) (EventOutput, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	account, err := s.repository.GetByID(destination)
-	if errors.Is(err, repository.ErrNotFound) {
+	if errors.Is(err, domain.ErrNotFound) {
 		account, err = domain.NewAccount(destination, 0)
 	}
 	if err != nil {

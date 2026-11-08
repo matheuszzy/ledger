@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/matheuszzy/ledger/internal/account/domain"
-	"github.com/matheuszzy/ledger/internal/account/repository"
 )
 
 // Transfer moves amount between accounts; nothing is saved unless both sides succeed.
@@ -23,7 +22,7 @@ func (s *Service) Transfer(origin, destination string, amount float64) (EventOut
 		return EventOutput{}, domain.ErrSameAccount
 	}
 	to, err := s.repository.GetByID(destination)
-	if errors.Is(err, repository.ErrNotFound) {
+	if errors.Is(err, domain.ErrNotFound) {
 		to, err = domain.NewAccount(destination, 0)
 	}
 	if err != nil {
