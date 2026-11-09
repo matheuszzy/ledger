@@ -12,7 +12,7 @@ func toAccountResponse(account *domain.Account) *accountResponse {
 	if account == nil {
 		return nil
 	}
-	return &accountResponse{ID: account.GetID(), Balance: account.GetBalance().GetAmount()}
+	return &accountResponse{ID: account.ID(), Balance: account.Balance()}
 }
 
 type eventRequest struct {

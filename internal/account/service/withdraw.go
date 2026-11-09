@@ -13,7 +13,7 @@ func (s *Service) Withdraw(origin string, amount float64) (EventOutput, error) {
 	if err != nil {
 		return EventOutput{}, err
 	}
-	if err := account.GetBalance().Withdraw(amount); err != nil {
+	if err := account.Withdraw(amount); err != nil {
 		return EventOutput{}, err
 	}
 	s.repository.Save(account)

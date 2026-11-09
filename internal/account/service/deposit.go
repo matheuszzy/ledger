@@ -20,7 +20,7 @@ func (s *Service) Deposit(destination string, amount float64) (EventOutput, erro
 	if err != nil {
 		return EventOutput{}, err
 	}
-	if err := account.GetBalance().Deposit(amount); err != nil {
+	if err := account.Deposit(amount); err != nil {
 		return EventOutput{}, err
 	}
 	s.repository.Save(account)

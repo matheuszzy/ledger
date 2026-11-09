@@ -12,5 +12,5 @@ func (s *Service) Balance(id string) (float64, error) {
 	if err != nil {
 		return 0, err
 	}
-	return account.GetBalance().GetAmount(), nil
+	return account.Balance(), nil
 }

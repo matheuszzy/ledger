@@ -35,7 +35,7 @@ go test -race ./...
 
 | Level | Location | What it covers |
 |---|---|---|
-| Unit | `internal/account/domain` | Balance rules: deposit, withdraw, cent rounding, negative amounts, insufficient funds |
+| Unit | `internal/account/domain` | Account rules: deposit, withdraw, cent rounding, negative amounts, insufficient funds |
 | Unit | `internal/account/repository` | Save and load, stored copies are isolated, concurrent access |
 | Service | `internal/account/service` | Each operation against the real in-memory store: state changes, error cases, concurrent deposits, withdrawals, transfers and balance reads during transfers |
 | Integration | `internal/account/handler/handler_integration_test.go` | Real HTTP server: the full spec scenario, end-to-end workflows, error responses, no side effects on `GET` |
@@ -93,7 +93,7 @@ The `404` and `422` bodies follow the spec's `0` convention. Validation errors c
 ```
 cmd/api/                   entrypoint: wires repository -> service -> handler
 internal/account/
-  domain/                  Account and Balance entities, business rules, domain errors
+  domain/                  Account entity, business rules, domain errors
   repository/              in-memory store
   service/                 use cases: Deposit, Withdraw, Transfer, Balance, Reset
   handler/                 HTTP: decode request, call service, encode response

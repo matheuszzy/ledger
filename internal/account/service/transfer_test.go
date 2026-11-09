@@ -16,8 +16,8 @@ func TestService_Transfer(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Transfer error = %v, want nil", err)
 		}
-		if result.Origin.GetBalance().GetAmount() != 0 || result.Destination.GetBalance().GetAmount() != 15 {
-			t.Fatalf("result balances = %v/%v, want 0/15", result.Origin.GetBalance().GetAmount(), result.Destination.GetBalance().GetAmount())
+		if result.Origin.Balance() != 0 || result.Destination.Balance() != 15 {
+			t.Fatalf("result balances = %v/%v, want 0/15", result.Origin.Balance(), result.Destination.Balance())
 		}
 		assertBalance(t, store, "100", 0)
 		assertBalance(t, store, "300", 15)
@@ -112,7 +112,7 @@ func TestService_Concurrent_TransfersConserveTotal(t *testing.T) {
 
 	first, _ := store.GetByID("100")
 	second, _ := store.GetByID("300")
-	if total := first.GetBalance().GetAmount() + second.GetBalance().GetAmount(); total != 2*start {
+	if total := first.Balance() + second.Balance(); total != 2*start {
 		t.Fatalf("total after concurrent transfers = %v, want %d", total, 2*start)
 	}
 	// Equal numbers of opposing transfers must cancel out exactly.

@@ -38,15 +38,15 @@ func (m *Memory) Save(account *domain.Account) {
 	}
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	m.accounts[stored.GetID()] = stored
+	m.accounts[stored.ID()] = stored
 }
 
 // clone returns a deep copy of the account, or nil when it is nil or not built by NewAccount.
 func clone(account *domain.Account) *domain.Account {
-	if account == nil || account.GetBalance() == nil {
+	if account == nil {
 		return nil
 	}
-	copied, err := domain.NewAccount(account.GetID(), account.GetBalance().GetAmount())
+	copied, err := domain.NewAccount(account.ID(), account.Balance())
 	if err != nil {
 		return nil
 	}

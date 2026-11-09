@@ -36,8 +36,8 @@ func TestMemory_SaveAndGet(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetByID(100) error = %v, want nil", err)
 	}
-	if account.GetID() != "100" || account.GetBalance().GetAmount() != 20.5 {
-		t.Fatalf("account = {%s %v}, want {100 20.5}", account.GetID(), account.GetBalance().GetAmount())
+	if account.ID() != "100" || account.Balance() != 20.5 {
+		t.Fatalf("account = {%s %v}, want {100 20.5}", account.ID(), account.Balance())
 	}
 }
 
@@ -56,19 +56,19 @@ func TestMemory_Copies(t *testing.T) {
 	input := mustAccount("100", 10)
 	repo.Save(input)
 
-	if err := input.GetBalance().Deposit(989); err != nil {
+	if err := input.Deposit(989); err != nil {
 		t.Fatalf("Deposit error = %v, want nil", err)
 	}
 	got, _ := repo.GetByID("100")
-	if amount := got.GetBalance().GetAmount(); amount != 10 {
+	if amount := got.Balance(); amount != 10 {
 		t.Fatalf("mutating the Save argument changed stored balance to %v", amount)
 	}
 
-	if err := got.GetBalance().Deposit(545); err != nil {
+	if err := got.Deposit(545); err != nil {
 		t.Fatalf("Deposit error = %v, want nil", err)
 	}
 	again, _ := repo.GetByID("100")
-	if amount := again.GetBalance().GetAmount(); amount != 10 {
+	if amount := again.Balance(); amount != 10 {
 		t.Fatalf("mutating the GetByID result changed stored balance to %v", amount)
 	}
 }
@@ -106,7 +106,7 @@ func TestMemory_Concurrent(t *testing.T) {
 				repo.Save(mustAccount(own, float64(i)))
 				repo.Save(mustAccount("shared", float64(i)))
 				if account, err := repo.GetByID("shared"); err == nil {
-					_ = account.GetBalance().Deposit(1)
+					_ = account.Deposit(1)
 				}
 				repo.GetByID(own)
 				if worker == 0 && i%50 == 0 {
@@ -134,7 +134,7 @@ func TestMemory_Concurrent_DistinctIDs(t *testing.T) {
 
 	for i := 0; i < accounts; i++ {
 		account, err := repo.GetByID(strconv.Itoa(i))
-		if err != nil || account.GetBalance().GetAmount() != float64(i) {
+		if err != nil || account.Balance() != float64(i) {
 			t.Fatalf("account %d = (%v, %v), want balance %d", i, account, err, i)
 		}
 	}

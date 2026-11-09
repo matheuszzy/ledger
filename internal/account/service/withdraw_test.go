@@ -16,7 +16,7 @@ func TestService_Withdraw(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Withdraw error = %v, want nil", err)
 	}
-	if result.Origin.GetID() != "100" || result.Origin.GetBalance().GetAmount() != 15 || result.Destination != nil {
+	if result.Origin.ID() != "100" || result.Origin.Balance() != 15 || result.Destination != nil {
 		t.Fatalf("result = %+v, want origin {100 15} and no destination", result)
 	}
 	assertBalance(t, store, "100", 15)

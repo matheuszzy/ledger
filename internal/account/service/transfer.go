@@ -28,10 +28,10 @@ func (s *Service) Transfer(origin, destination string, amount float64) (EventOut
 	if err != nil {
 		return EventOutput{}, err
 	}
-	if err := from.GetBalance().Withdraw(amount); err != nil {
+	if err := from.Withdraw(amount); err != nil {
 		return EventOutput{}, err
 	}
-	if err := to.GetBalance().Deposit(amount); err != nil {
+	if err := to.Deposit(amount); err != nil {
 		return EventOutput{}, err
 	}
 	s.repository.Save(from)

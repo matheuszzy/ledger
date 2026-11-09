@@ -201,8 +201,8 @@ func TestAccount_Withdraw_InsufficientFunds(t *testing.T) {
 
 // TestAccount_APIScenario replays the deposit, withdraw and transfer amounts from the API spec.
 func TestAccount_APIScenario(t *testing.T) {
-	origin, _ := NewBalance(0)
-	destination, _ := NewBalance(0)
+	origin, _ := NewAccount("100", 0)
+	destination, _ := NewAccount("300", 0)
 
 	steps := []struct {
 		name string
@@ -217,8 +217,8 @@ func TestAccount_APIScenario(t *testing.T) {
 		if err := step.do(); err != nil {
 			t.Fatalf("%s: error = %v, want nil", step.name, err)
 		}
-		if origin.GetAmount() != step.want {
-			t.Fatalf("%s: balance = %v, want %v", step.name, origin.GetAmount(), step.want)
+		if origin.Balance() != step.want {
+			t.Fatalf("%s: balance = %v, want %v", step.name, origin.Balance(), step.want)
 		}
 	}
 
@@ -228,7 +228,7 @@ func TestAccount_APIScenario(t *testing.T) {
 	if err := destination.Deposit(15); err != nil {
 		t.Fatalf("transfer deposit: error = %v, want nil", err)
 	}
-	if origin.GetAmount() != 0 || destination.GetAmount() != 15 {
-		t.Fatalf("after transfer origin/destination = %v/%v, want 0/15", origin.GetAmount(), destination.GetAmount())
+	if origin.Balance() != 0 || destination.Balance() != 15 {
+		t.Fatalf("after transfer origin/destination = %v/%v, want 0/15", origin.Balance(), destination.Balance())
 	}
 }

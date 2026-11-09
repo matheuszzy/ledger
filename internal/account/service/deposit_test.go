@@ -14,7 +14,7 @@ func TestService_Deposit(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Deposit into new account error = %v, want nil", err)
 	}
-	if result.Destination.GetID() != "100" || result.Destination.GetBalance().GetAmount() != 10 || result.Origin != nil {
+	if result.Destination.ID() != "100" || result.Destination.Balance() != 10 || result.Origin != nil {
 		t.Fatalf("result = %+v, want destination {100 10} and no origin", result)
 	}
 	assertBalance(t, store, "100", 10)
@@ -23,7 +23,7 @@ func TestService_Deposit(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Deposit into existing account error = %v, want nil", err)
 	}
-	if got := result.Destination.GetBalance().GetAmount(); got != 20 {
+	if got := result.Destination.Balance(); got != 20 {
 		t.Fatalf("result balance = %v, want 20", got)
 	}
 	assertBalance(t, store, "100", 20)

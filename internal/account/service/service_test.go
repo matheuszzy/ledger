@@ -32,7 +32,7 @@ func assertBalance(t *testing.T, store *repository.Memory, id string, want float
 	if err != nil {
 		t.Fatalf("account %q: error = %v, want it stored with balance %v", id, err, want)
 	}
-	if got := account.GetBalance().GetAmount(); got != want {
+	if got := account.Balance(); got != want {
 		t.Fatalf("account %q balance = %v, want %v", id, got, want)
 	}
 }
