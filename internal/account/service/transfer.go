@@ -8,7 +8,7 @@ import (
 
 // Transfer moves amount between accounts; nothing is saved unless both sides succeed.
 func (s *Service) Transfer(origin, destination string, amount float64) (EventOutput, error) {
-	if origin == "" {
+	if origin == "" || destination == "" {
 		return EventOutput{}, domain.ErrInvalidID
 	}
 

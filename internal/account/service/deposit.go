@@ -6,7 +6,11 @@ import (
 	"github.com/matheuszzy/ledger/internal/account/domain"
 )
 
+// Deposit adds amount to the destination account, creating it when it does not exist.
 func (s *Service) Deposit(destination string, amount float64) (EventOutput, error) {
+	if destination == "" {
+		return EventOutput{}, domain.ErrInvalidID
+	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	account, err := s.repository.GetByID(destination)
