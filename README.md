@@ -35,7 +35,7 @@ go test -race ./...
 
 | Level | Location | What it covers |
 |---|---|---|
-| Unit | `internal/account/domain` | Balance rules: deposit, withdraw, negative amounts, insufficient funds |
+| Unit | `internal/account/domain` | Balance rules: deposit, withdraw, cent rounding, negative amounts, insufficient funds |
 | Unit | `internal/account/repository` | Save and load, stored copies are isolated, concurrent access |
 | Service | `internal/account/service` | Each operation against the real in-memory store: state changes, error cases, concurrent deposits, withdrawals and transfers |
 | Integration | `internal/account/handler/handler_integration_test.go` | Real HTTP server: the full spec scenario, end-to-end workflows, error responses, no side effects on `GET` |
@@ -114,6 +114,7 @@ The handler holds no business logic, so the HTTP layer can be replaced without t
 - **Atomic events.** One mutex in the service covers each deposit, withdrawal and transfer. A transfer validates both sides first and saves them only if the withdrawal and the deposit both succeed. Concurrent tests run with `-race` check that money is never lost or created.
 - **Reads have no side effects.** `GET /balance` never creates an account, and a test covers it.
 - **Account creation.** Deposits and transfers create the destination account if it does not exist. Withdrawals and transfers from an unknown origin return `404`, as the spec requires.
+- **Amounts are rounded to cents.** Amounts stay `float64` so decimal values are accepted, but every amount and resulting balance is rounded to two decimal places. `0.1 + 0.2` gives `0.3`, not `0.30000000000000004`.
 - **Insufficient funds returns** `422`**.** The spec does not define this case. `422` keeps it distinct from an unknown account (`404`) and from malformed input (`400`).
 - **Gin** handles routing, JSON binding and `405` responses, which keeps the handler short.
 

@@ -139,6 +139,18 @@ func TestWorkflow_ResetThenReuseIDs(t *testing.T) {
 	})
 }
 
+// TestWorkflow_CentsRounding checks that decimal amounts are kept to two places with no float drift.
+func TestWorkflow_CentsRounding(t *testing.T) {
+	server := newServer(t)
+	runSteps(t, server, []step{
+		{"deposit 0.1", "POST", "/event", `{"type":"deposit", "destination":"100", "amount":0.1}`, 201, `{"destination":{"id":"100","balance":0.1}}`},
+		{"deposit 0.2", "POST", "/event", `{"type":"deposit", "destination":"100", "amount":0.2}`, 201, `{"destination":{"id":"100","balance":0.3}}`},
+		{"amount rounds to cents", "POST", "/event", `{"type":"transfer", "origin":"100", "destination":"300", "amount":0.126}`, 201, `{"origin":{"id":"100","balance":0.17},"destination":{"id":"300","balance":0.13}}`},
+		{"balance of 100", "GET", "/balance?account_id=100", "", 200, "0.17"},
+		{"balance of 300", "GET", "/balance?account_id=300", "", 200, "0.13"},
+	})
+}
+
 // TestWorkflow_ConcurrentTransfers races transfers out of one account and checks it is never overdrawn.
 func TestWorkflow_ConcurrentTransfers(t *testing.T) {
 	server := newServer(t)

@@ -16,6 +16,7 @@ func TestNewBalance(t *testing.T) {
 		{"positive", 10, 10, nil},
 		{"zero", 0, 0, nil},
 		{"fractional", 20.5, 20.5, nil},
+		{"rounds to cents", 20.556, 20.56, nil},
 		{"negative", -1, 0, ErrNegativeAmount},
 	}
 	for _, tt := range tests {
@@ -49,6 +50,8 @@ func TestBalance_Deposit(t *testing.T) {
 		{"into empty balance", 0, 10, 10, nil},
 		{"into existing balance", 10, 10, 20, nil},
 		{"fractional", 10, 0.5, 10.5, nil},
+		{"sums without float error", 0.1, 0.2, 0.3, nil},
+		{"rounds amount to cents", 10, 0.126, 10.13, nil},
 		{"zero amount", 10, 0, 10, nil},
 		{"negative amount", 10, -1, 10, ErrNegativeAmount},
 	}
@@ -80,6 +83,8 @@ func TestBalance_Withdraw(t *testing.T) {
 		{"exact balance", 15, 15, 0},
 		{"zero amount", 10, 0, 10},
 		{"fractional", 10, 0.5, 9.5},
+		{"subtracts without float error", 0.3, 0.1, 0.2},
+		{"rounds amount to cents", 10, 0.126, 9.87},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
