@@ -38,11 +38,11 @@ func (h *Handler) Event(c *gin.Context) {
 	var result service.EventOutput
 	var err error
 	switch req.Type {
-	case domain.EVENT_TYPE_DEPOSIT:
+	case domain.EventTypeDeposit:
 		result, err = h.svc.Deposit(req.Destination, req.Amount)
-	case domain.EVENT_TYPE_WITHDRAW:
+	case domain.EventTypeWithdraw:
 		result, err = h.svc.Withdraw(req.Origin, req.Amount)
-	case domain.EVENT_TYPE_TRANSFER:
+	case domain.EventTypeTransfer:
 		result, err = h.svc.Transfer(req.Origin, req.Destination, req.Amount)
 	default:
 		err = errUnknownType
