@@ -73,3 +73,41 @@ func TestService_Balance_HasNoSideEffects(t *testing.T) {
 	assertMissing(t, store, "1234")
 	assertBalance(t, store, "100", 20)
 }
+
+// TestService_Concurrent_BalanceNeverSeesHalfTransfer reads both sides while transfers run and checks no money goes missing.
+func TestService_Concurrent_BalanceNeverSeesHalfTransfer(t *testing.T) {
+	const start = 2000
+	svc, store := newService()
+	seed(t, store, "100", start)
+	seed(t, store, "300", 0)
+
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		runConcurrently(4, func(int) {
+			for range start / 4 {
+				if _, err := svc.Transfer("100", "300", 1); err != nil {
+					t.Errorf("Transfer(100 -> 300) error = %v, want nil", err)
+					return
+				}
+			}
+		})
+	}()
+
+	for {
+		select {
+		case <-done:
+			assertBalance(t, store, "100", 0)
+			assertBalance(t, store, "300", start)
+			return
+		default:
+		}
+		// Money only flows 100 -> 300, so reading 100 first can over-count but never under-count.
+		origin, _ := svc.Balance("100")
+		destination, _ := svc.Balance("300")
+		if total := origin + destination; total < start {
+			<-done
+			t.Fatalf("read %v + %v = %v while transfers ran, want at least %d (saw a half-done transfer)", origin, destination, total, start)
+		}
+	}
+}
