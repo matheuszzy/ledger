@@ -100,6 +100,7 @@ internal/account/
 ```
 
 Dependencies only point inward:
+
 - `handler` depends on `service`.
 - `service` depends on `domain` and on a small `Repository` interface that it defines itself.
 - `domain` depends on nothing.
@@ -113,12 +114,12 @@ The handler holds no business logic, so the HTTP layer can be replaced without t
 - **Atomic events.** One mutex in the service covers each deposit, withdrawal and transfer. A transfer validates both sides first and saves them only if the withdrawal and the deposit both succeed. Concurrent tests run with `-race` check that money is never lost or created.
 - **Reads have no side effects.** `GET /balance` never creates an account, and a test covers it.
 - **Account creation.** Deposits and transfers create the destination account if it does not exist. Withdrawals and transfers from an unknown origin return `404`, as the spec requires.
-- **Insufficient funds returns `422`.** The spec does not define this case. `422` keeps it distinct from an unknown account (`404`) and from malformed input (`400`).
+- **Insufficient funds returns** `422`**.** The spec does not define this case. `422` keeps it distinct from an unknown account (`404`) and from malformed input (`400`).
 - **Gin** handles routing, JSON binding and `405` responses, which keeps the handler short.
 
 ## Spec
 
-The scenario from the assignment, replayed in order by `TestREADMEScenario`:
+The scenario from the assignment:
 
 ```
 --
