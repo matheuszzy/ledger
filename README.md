@@ -37,7 +37,7 @@ go test -race ./...
 |---|---|---|
 | Unit | `internal/account/domain` | Balance rules: deposit, withdraw, cent rounding, negative amounts, insufficient funds |
 | Unit | `internal/account/repository` | Save and load, stored copies are isolated, concurrent access |
-| Service | `internal/account/service` | Each operation against the real in-memory store: state changes, error cases, concurrent deposits, withdrawals and transfers |
+| Service | `internal/account/service` | Each operation against the real in-memory store: state changes, error cases, concurrent deposits, withdrawals, transfers and balance reads during transfers |
 | Integration | `internal/account/handler/handler_integration_test.go` | Real HTTP server: the full spec scenario, end-to-end workflows, error responses, no side effects on `GET` |
 
 No mocks are used. Every test runs against the real in-memory repository and checks the resulting state, not only the response.
@@ -111,7 +111,7 @@ The handler holds no business logic, so the HTTP layer can be replaced without t
 
 - **In-memory storage.** Durability is not required, so accounts live in a map guarded by a mutex. To add a database, implement the three-method `Repository` interface in `internal/account/service/service.go`.
 - **The repository stores copies.** `GetByID` and `Save` copy the account, so stored state only changes when the service calls `Save`. A failed operation cannot leave a half-updated account behind.
-- **Atomic events.** One mutex in the service covers each deposit, withdrawal and transfer. A transfer validates both sides first and saves them only if the withdrawal and the deposit both succeed. Concurrent tests run with `-race` check that money is never lost or created.
+- **Atomic events.** One mutex in the service covers each deposit, withdrawal, transfer and balance read, so a read never sees a transfer half done. A transfer validates both sides first and saves them only if the withdrawal and the deposit both succeed. Concurrent tests run with `-race` check that money is never lost or created.
 - **Reads have no side effects.** `GET /balance` never creates an account, and a test covers it.
 - **Account creation.** Deposits and transfers create the destination account if it does not exist. Withdrawals and transfers from an unknown origin return `404`, as the spec requires.
 - **Amounts are rounded to cents.** Amounts stay `float64` so decimal values are accepted, but every amount and resulting balance is rounded to two decimal places. `0.1 + 0.2` gives `0.3`, not `0.30000000000000004`.

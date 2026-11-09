@@ -218,9 +218,9 @@ func TestEvent_Errors(t *testing.T) {
 		{"amount with wrong type", `{"type":"deposit", "destination":"100", "amount":"ten"}`, 400, errInvalidBody.Error()},
 		{"unknown event type", `{"type":"refund", "destination":"100", "amount":1}`, 400, errUnknownType.Error()},
 		{"missing event type", `{"destination":"100", "amount":1}`, 400, errUnknownType.Error()},
-		{"deposit without destination", `{"type":"deposit", "amount":1}`, 400, "AC002 - The ID must be a valid integer"},
-		{"withdraw without origin", `{"type":"withdraw", "amount":1}`, 400, "AC002 - The ID must be a valid integer"},
-		{"transfer without destination", `{"type":"transfer", "origin":"100", "amount":1}`, 400, "AC002 - The ID must be a valid integer"},
+		{"deposit without destination", `{"type":"deposit", "amount":1}`, 400, "AC002 - The ID is required"},
+		{"withdraw without origin", `{"type":"withdraw", "amount":1}`, 400, "AC002 - The ID is required"},
+		{"transfer without destination", `{"type":"transfer", "origin":"100", "amount":1}`, 400, "AC002 - The ID is required"},
 		{"transfer to the same account", `{"type":"transfer", "origin":"100", "destination":"100", "amount":5}`, 400, "AC004 - Origin and destination must be different accounts"},
 		{"negative deposit", `{"type":"deposit", "destination":"100", "amount":-1}`, 400, "AC001 - Amount cannot be negative"},
 		{"negative withdraw", `{"type":"withdraw", "origin":"100", "amount":-1}`, 400, "AC001 - Amount cannot be negative"},
@@ -254,7 +254,7 @@ func TestBalance_Errors(t *testing.T) {
 		wantBody   string
 	}{
 		{"unknown account", "/balance?account_id=1234", 404, "0"},
-		{"missing account_id", "/balance", 400, "AC002 - The ID must be a valid integer"},
+		{"missing account_id", "/balance", 400, "AC002 - The ID is required"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

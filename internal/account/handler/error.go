@@ -9,8 +9,8 @@ import (
 )
 
 var (
-	errInvalidBody = errors.New("TE001 - invalid request body")
-	errUnknownType = errors.New("TE002 - unknown event type")
+	errInvalidBody = errors.New("TE001 - Invalid request body")
+	errUnknownType = errors.New("TE002 - Unknown event type")
 )
 
 func writeError(c *gin.Context, err error) {
